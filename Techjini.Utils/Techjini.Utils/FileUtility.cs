@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Web;
 
@@ -96,5 +97,120 @@ namespace Techjini.Utils
 
             return copiedFilePath;
         }
+
+        /// <summary>
+        /// Validates the type of the file.
+        /// </summary>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns></returns>
+        public static bool ValidateFileType(string fileName, List<string> fileExtensionsLst)
+        {
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                string filePath = Path.Combine(string.Empty, fileName);
+                string extension = Path.GetExtension(filePath);
+                if (!string.IsNullOrEmpty(extension) && fileExtensionsLst.Contains(extension.ToLower()))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Deletes the specified files.
+        /// </summary>
+        /// <param name="FileInfos">The file infos of the files to be deleted.</param>
+        /// <returns></returns>
+        public static bool DeleteFiles(List<FileInfo> FileInfos)
+        {
+            if (FileInfos != null && FileInfos.Count > 0)
+            {
+                foreach (FileInfo fileInfo in FileInfos)
+                {
+                    try
+                    {
+                        fileInfo.Delete();
+                    }
+                    catch { }
+                }
+
+                foreach (FileInfo fileInfo in FileInfos)
+                {
+                    if (fileInfo.Exists)
+                        return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Renames the files to given names.
+        /// </summary>
+        /// <param name="SourceFileInfo">The source file information.</param>
+        /// <param name="fileNames">The file names.</param>
+        /// <returns></returns>
+        public static List<FileInfo> RenameFiles(List<FileInfo> SourceFileInfo, List<string> fileNames, NameClashOptions options)
+        {
+            List<FileInfo> MovedFileInfos = new List<FileInfo>();
+            if (SourceFileInfo != null && fileNames != null && SourceFileInfo.Count == fileNames.Count)
+            {
+                foreach (FileInfo fileInfo in SourceFileInfo)
+                {
+                    int index = SourceFileInfo.IndexOf(fileInfo);
+                    if (!string.IsNullOrWhiteSpace(fileNames[index]))
+                    {
+                        string destinationFilePath = fileInfo.FullName.Replace(fileInfo.Name, fileNames[index]);
+
+                        if (options == NameClashOptions.ReplaceExisting)
+                        {
+                            MovedFileInfos.Add(fileInfo.CopyTo(destinationFilePath, true));
+                        }
+                        else if (options == NameClashOptions.RenameUniquely)
+                        {
+                            string extension = Path.GetExtension(destinationFilePath);
+                            do
+                            {
+                                string uniquePath = destinationFilePath.Insert(destinationFilePath.Length - extension.Length, "_" + DateTime.Now.Ticks + extension);
+                                if (!File.Exists(uniquePath))
+                                {
+                                    destinationFilePath = uniquePath;
+                                    MovedFileInfos.Add(fileInfo.CopyTo(destinationFilePath));
+                                    break;
+                                }
+                            } while (destinationFilePath.EndsWith(fileNames[index]));
+                        }
+                        else
+                        {
+                            try
+                            {
+                                MovedFileInfos.Add(fileInfo.CopyTo(destinationFilePath, false));
+                            }
+                            catch
+                            {
+                                MovedFileInfos.Add(fileInfo);
+                            }
+                        }
+
+                        // Check if the renamed file is not same as the original file then delete the original file
+                        if (!string.Equals(MovedFileInfos[index].FullName, fileInfo.FullName))
+                            fileInfo.Delete();
+                    }
+                }
+            }
+
+            return MovedFileInfos;
+        }
+    }
+
+    public enum NameClashOptions
+    {
+        DoNothing = 0,
+        ReplaceExisting = 1,
+        RenameUniquely = 2
     }
 }
