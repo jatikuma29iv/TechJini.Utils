@@ -11,7 +11,9 @@ namespace Techjini.Utils
         /// Moves the file to application data.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// Path of the moved file.
+        /// </returns>
         public static string MoveFileToAppData(string filePath)
         {
             try
@@ -68,7 +70,9 @@ namespace Techjini.Utils
         /// <param name="fileName">Name of the file.</param>
         /// <param name="filePath">The file path.</param>
         /// <param name="fileMovePath">The file move path.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// Path of the moved file.
+        /// </returns>
         public static string MoveFileToPathMakingUniqueName(string fileName, string filePath, string fileMovePath)
         {
             string dummyPath = Path.Combine(string.Empty, fileName);
@@ -86,7 +90,9 @@ namespace Techjini.Utils
         /// <param name="fileName">Name of the file.</param>
         /// <param name="filePath">The file path.</param>
         /// <param name="fileCopyPath">The file copy path.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// Path of the copied file.
+        /// </returns>
         public static string CopyFileToPathMakingUniqueName(string fileName, string filePath, string fileCopyPath)
         {
             string dummyPath = Path.Combine(string.Empty, fileName);
@@ -102,7 +108,10 @@ namespace Techjini.Utils
         /// Validates the type of the file.
         /// </summary>
         /// <param name="fileName">Name of the file.</param>
-        /// <returns></returns>
+        /// <param name="fileExtensionsLst">The lis of file extensions to validate against.</param>
+        /// <returns>
+        ///   <c>true</c> if file type exists in the given extensions; otherwise, <c>false</c>.
+        /// </returns>
         public static bool ValidateFileType(string fileName, List<string> fileExtensionsLst)
         {
             if (!string.IsNullOrEmpty(fileName))
@@ -122,7 +131,9 @@ namespace Techjini.Utils
         /// Deletes the specified files.
         /// </summary>
         /// <param name="FileInfos">The file infos of the files to be deleted.</param>
-        /// <returns></returns>
+        /// <returns>
+        ///   <c>true</c> if all the files are deleted successfully; otherwise, <c>false</c>.
+        /// </returns>
         public static bool DeleteFiles(List<FileInfo> FileInfos)
         {
             if (FileInfos != null && FileInfos.Count > 0)
@@ -151,10 +162,13 @@ namespace Techjini.Utils
         /// <summary>
         /// Renames the files to given names.
         /// </summary>
-        /// <param name="SourceFileInfo">The source file information.</param>
-        /// <param name="fileNames">The file names.</param>
-        /// <returns></returns>
-        public static List<FileInfo> RenameFiles(List<FileInfo> SourceFileInfo, List<string> fileNames, NameClashOptions options)
+        /// <param name="SourceFileInfo">The list containing the metadata of the source files.</param>
+        /// <param name="fileNames">The list containing the new file names.</param>
+        /// <param name="options">The options for handling the name clash while renaming the files.</param>
+        /// <returns>
+        /// A list containing the metadata for the renamed files
+        /// </returns>
+        public static List<FileInfo> RenameFiles(List<FileInfo> SourceFileInfo, List<string> fileNames, NameClashOptions options = NameClashOptions.DoNothing)
         {
             List<FileInfo> MovedFileInfos = new List<FileInfo>();
             if (SourceFileInfo != null && fileNames != null && SourceFileInfo.Count == fileNames.Count)
