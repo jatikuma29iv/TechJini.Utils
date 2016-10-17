@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Web;
+using System.Linq;
 
 namespace Techjini.Utils
 {
@@ -219,6 +221,150 @@ namespace Techjini.Utils
 
             return MovedFileInfos;
         }
+
+        /// <summary>
+        /// Gets the specified number of dummy files with the given file name.
+        /// </summary>
+        /// <param name="count">Number of dummy files to be created.</param>
+        /// <param name="fileName">Name of the file.</param>
+        /// <returns>
+        /// A list containing the metadata of the dummy files.
+        /// </returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static List<FileInfo> GetDummyFiles(int count, string fileName = "DummyFile.txt")
+        {
+            string param2Name = MethodUtility.GetParameterName(MethodBase.GetCurrentMethod(), 1);
+
+            if (string.IsNullOrWhiteSpace(fileName))
+            {
+                throw new ArgumentException("Parameter cannot be null, empty or white space(s).", param2Name);
+            }
+
+            List<FileInfo> dummyFiles = new List<FileInfo>();
+
+            List<string> dummyFileNames = new List<string>(count);
+            for (int i = 0; i < count; i++)
+                dummyFileNames.Add(fileName);
+
+            dummyFiles = GetDummyFiles(dummyFileNames, DuplicateNameOptions.RenameDuplicates);
+
+            //string baseDirectory = HttpContext.Current.Server.MapPath("~/App_Data/" + DateTime.Now.Ticks);
+            //if (!Directory.Exists(baseDirectory))
+            //{
+            //    Directory.CreateDirectory(baseDirectory);
+            //}
+
+            //for (int i = 0; i < count; i++)
+            //{
+            //    string dummyFileName = (i == 0) ? fileName : string.Join("_", Path.GetFileNameWithoutExtension(fileName), i) + Path.GetExtension(fileName);
+            //    string filePath = string.Join("/", baseDirectory, dummyFileName);
+
+            //    try
+            //    {
+            //        if (i == 0)
+            //        {
+            //            using (StreamWriter sw = File.CreateText(filePath))
+            //            {
+            //                sw.Write("Dummy Test Content");
+            //                sw.Close();
+            //                sw.Dispose();
+            //            }
+            //        }
+            //        else
+            //        {
+            //            dummyFiles[0].CopyTo(filePath);
+            //        }
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex.ToString());
+            //    }
+
+            //    if (File.Exists(filePath))
+            //    {
+            //        dummyFiles.Add(new FileInfo(filePath));
+            //    }
+            //}
+
+            return dummyFiles;
+        }
+
+        /// <summary>
+        /// Gets dummy files with the specified file Names.
+        /// </summary>
+        /// <param name="fileNames">The file names.</param>
+        /// <param name="options">The options to be used in case of duplicate names. By default, value is set to <see cref="DuplicateNameOptions.ThrowError" /></param>
+        /// <returns>
+        /// A list containing the metadata of the dummy files.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when fileNames is null</exception>
+        /// <exception cref="ArgumentException">Thrown when there are duplicate file names in the given names and options is selected as <see cref="DuplicateNameOptions.ThrowError" />.</exception>
+        public static List<FileInfo> GetDummyFiles(List<string> fileNames, DuplicateNameOptions options = DuplicateNameOptions.ThrowError)
+        {
+            string param1Name = MethodUtility.GetParameterName(MethodBase.GetCurrentMethod(), 0);
+
+            if (fileNames == null)
+                throw new ArgumentNullException(param1Name);
+
+            if (fileNames.Distinct(StringComparer.OrdinalIgnoreCase).Count() != fileNames.Count && options == DuplicateNameOptions.ThrowError)
+                throw new ArgumentException("Duplicate file names in the given names.", param1Name);
+
+            string baseDirectory = HttpContext.Current.Server.MapPath("~/App_Data/" + DateTime.Now.Ticks);
+            if (!Directory.Exists(baseDirectory))
+            {
+                Directory.CreateDirectory(baseDirectory);
+            }
+
+            List<FileInfo> dummyFiles = new List<FileInfo>();
+
+            for (int i = 0; i < fileNames.Count; i++)
+            {
+                string filePath = string.Join("/", baseDirectory, fileNames[i]);
+
+                try
+                {
+                    if (i == 0)
+                    {
+                        using (StreamWriter sw = File.CreateText(filePath))
+                        {
+                            sw.Write("Dummy Test Content");
+                            sw.Close();
+                            sw.Dispose();
+                        }
+                    }
+                    else
+                    {
+                        if (File.Exists(filePath))
+                        {
+                            if (options == DuplicateNameOptions.SkipDuplicates)
+                            {
+                                continue;
+                            }
+
+                            if (options == DuplicateNameOptions.RenameDuplicates)
+                            {
+                                int duplicateCount = fileNames.GetRange(0, i).Count(name => name == fileNames[i]);
+                                string dummyFileName = string.Join("_", Path.GetFileNameWithoutExtension(fileNames[i]), duplicateCount) + Path.GetExtension(fileNames[i]);
+                                filePath = string.Join("/", baseDirectory, dummyFileName);
+                            }
+                        }
+
+                        dummyFiles[0].CopyTo(filePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
+                if (File.Exists(filePath))
+                {
+                    dummyFiles.Add(new FileInfo(filePath));
+                }
+            }
+
+            return dummyFiles;
+        }
     }
 
     public enum NameClashOptions
@@ -226,5 +372,12 @@ namespace Techjini.Utils
         DoNothing = 0,
         ReplaceExisting = 1,
         RenameUniquely = 2
+    }
+
+    public enum DuplicateNameOptions
+    {
+        ThrowError = 0,
+        SkipDuplicates = 1,
+        RenameDuplicates = 2
     }
 }
