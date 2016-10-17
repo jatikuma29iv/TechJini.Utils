@@ -14,7 +14,9 @@ namespace Techjini.Utils
         /// <param name="response">The response object.</param>
         /// <param name="stream">The stream to be attached.</param>
         /// <param name="attachmentName">Name of the attachment.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// The <see cref="HttpResponseMessage" /> object containing the stream.
+        /// </returns>
         public static HttpResponseMessage AttachStreamInResponse(HttpResponseMessage response, Stream stream, string attachmentName = "attachment")
         {
             StreamContent streamContent = new StreamContent(stream);
@@ -31,10 +33,12 @@ namespace Techjini.Utils
         }
 
         /// <summary>
-        /// Gets the stream from file path.
+        /// Gets the response message containing a given file.
         /// </summary>
-        /// <param name="path">The path.</param>
-        /// <returns></returns>
+        /// <param name="path">The path of the file.</param>
+        /// <returns>
+        /// The <see cref="HttpResponseMessage" /> object containing the file
+        /// </returns>
         public static HttpResponseMessage GetResponseWithFileContent(string path)
         {
             HttpResponseMessage response = new HttpResponseMessage();
@@ -60,11 +64,13 @@ namespace Techjini.Utils
         }
 
         /// <summary>
-        /// Creates the response message from the content.
+        /// Creates the response message from the given content.
         /// </summary>
         /// <param name="content">The content.</param>
         /// <param name="statusCode">The status code.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// The <see cref="HttpResponseMessage" /> object containing the value of the content as JSON.
+        /// </returns>
         public static HttpResponseMessage CreateResponseMessageFromContent(object content, HttpStatusCode statusCode)
         {
             HttpResponseMessage response = new HttpResponseMessage(statusCode);

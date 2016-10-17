@@ -8,10 +8,13 @@ namespace Techjini.Utils
     public static class CommonUtility
     {
         /// <summary>
-        /// Converts the given path to server path.
+        /// Converts the given local path of a file to the given server path.
         /// </summary>
-        /// <param name="localPath">The local path.</param>
-        /// <returns></returns>
+        /// <param name="localPath">The local path of the file.</param>
+        /// <param name="serverBasePath">The base path of the server which will replace the local path.</param>
+        /// <returns>
+        /// The path containing the server access path for the given local file
+        /// </returns>
         public static string ConvertToServerPath(string localPath, string serverBasePath)
         {
             if (!string.IsNullOrWhiteSpace(localPath))
@@ -31,7 +34,9 @@ namespace Techjini.Utils
         /// <param name="actualString">The actual string.</param>
         /// <param name="keywordToReplace">The keyword to replace.</param>
         /// <param name="keywordAfterReplacement">The keyword after replacement.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// A string with all occurences of given keyword replaced by the replacement keyword.
+        /// </returns>
         public static string ReplaceKeywordInString(string actualString, string keywordToReplace, string keywordAfterReplacement)
         {
             keywordToReplace = keywordToReplace.ToLower();
@@ -45,10 +50,12 @@ namespace Techjini.Utils
         }
 
         /// <summary>
-        /// Firsts the letter to upper.
+        /// Convert the first letter of the given string to upper case.
         /// </summary>
         /// <param name="str">The string.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// A string with the first letter converted to upper case.
+        /// </returns>
         public static string FirstLetterToUpper(string str)
         {
             if (string.IsNullOrWhiteSpace(str))
@@ -58,11 +65,13 @@ namespace Techjini.Utils
         }
 
         /// <summary>
-        /// Converts to a similar type object.
+        /// Converts the given object to a similar type object.
         /// </summary>
         /// <typeparam name="TReturnType">The type of the return type.</typeparam>
         /// <param name="initialObject">The initial object.</param>
-        /// <returns>The converted object</returns>
+        /// <returns>
+        /// The object converted into <c>TReturnType</c>
+        /// </returns>
         public static TReturnType ConvertToSimilarTypeObject<TReturnType>(object initialObject)
         {
             TReturnType resultantObject = default(TReturnType);
@@ -81,7 +90,7 @@ namespace Techjini.Utils
         }
 
         /// <summary>
-        /// Converts the null for string type members to empty string.
+        /// Converts the string params containing null values to empty string.
         /// </summary>
         /// <param name="initialObject">The initial object.</param>
         public static void ConvertNullToEmptyString(object initialObject)

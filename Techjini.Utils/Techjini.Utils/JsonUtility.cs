@@ -7,10 +7,12 @@ namespace Techjini.Utils
     public static class JsonUtility
     {
         /// <summary>
-        /// Serializes the object to json.
+        /// Serializes the given object to json string.
         /// </summary>
-        /// <param name="jsonObject">The json object.</param>
-        /// <returns></returns>
+        /// <param name="jsonObject">The object.</param>
+        /// <returns>
+        /// The JSON string representation of the given object.
+        /// </returns>
         public static string SerializeObjectToJson(object jsonObject)
         {
             try
@@ -24,11 +26,13 @@ namespace Techjini.Utils
         }
 
         /// <summary>
-        /// Deserializes the json to object.
+        /// Deserializes the given json string to the specified object of given type.
         /// </summary>
         /// <typeparam name="TReturnType">The type of the return value.</typeparam>
         /// <param name="jsonString">The json string.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// An object of type <c>TReturnType</c> representing the given json.
+        /// </returns>
         public static TReturnType DeserializeJsonToObject<TReturnType>(string jsonString)
         {
             try
@@ -42,12 +46,14 @@ namespace Techjini.Utils
         }
 
         /// <summary>
-        /// Injects multiple properties to json.
+        /// Injects the given properties to json.
         /// </summary>
         /// <param name="jsonString">The json string.</param>
-        /// <param name="propertiesToInsert">The properties to insert.</param>
-        /// <returns></returns>
-        public static bool InjectMultiplePropertiesToJson(string jsonString, Dictionary<string, object> propertiesToInsert)
+        /// <param name="propertiesToInsert">The properties to be inserted.</param>
+        /// <returns>
+        /// The new JSON string containing the new properties on successful insertion, otherwise, the original JSON string.
+        /// </returns>
+        public static string InjectMultiplePropertiesToJson(string jsonString, Dictionary<string, object> propertiesToInsert)
         {
             if (!string.IsNullOrEmpty(jsonString) && propertiesToInsert != null)
             {
@@ -56,18 +62,22 @@ namespace Techjini.Utils
                 {
                     modifiedJsonString = InjectPropertyToJson(modifiedJsonString, propertyKey, propertiesToInsert[propertyKey]);
                 }
+
+                return modifiedJsonString;
             }
 
-            return false;
+            return jsonString;
         }
 
         /// <summary>
-        /// Injects the specified property to json.
+        /// Injects the specified property to the given json string.
         /// </summary>
         /// <param name="jsonString">The json string.</param>
         /// <param name="propertyName">Name of the property to be inserted.</param>
-        /// <param name="propertyValue">The property value.</param>
-        /// <returns></returns>
+        /// <param name="propertyValue">The value for the property.</param>
+        /// <returns>
+        /// The JSON string containing the inserted property.
+        /// </returns>
         public static string InjectPropertyToJson(string jsonString, string propertyName, object propertyValue)
         {
             if (!string.IsNullOrEmpty(jsonString) && !string.IsNullOrEmpty(propertyName))
@@ -90,7 +100,9 @@ namespace Techjini.Utils
         /// </summary>
         /// <param name="jsonString">The json string.</param>
         /// <param name="objectValue">The object value.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// The JSON array string containing the added element.
+        /// </returns>
         public static string InsertObjectToJsonArray(string jsonString, object objectValue)
         {
             if (!string.IsNullOrEmpty(jsonString) && objectValue != null)
@@ -114,7 +126,9 @@ namespace Techjini.Utils
         /// </summary>
         /// <param name="jsonString">The json string.</param>
         /// <param name="objectJsonForInsertion">The object json for insertion.</param>
-        /// <returns></returns>
+        /// <returns>
+        /// The JSON array string containing the added element.
+        /// </returns>
         public static string InsertObjectToJsonArray(string jsonString, string objectJsonForInsertion)
         {
             if (!string.IsNullOrEmpty(jsonString) && !string.IsNullOrEmpty(objectJsonForInsertion))

@@ -12,12 +12,14 @@ namespace Techjini.Utils
     public static class ZipUtility
     {
         /// <summary>
-        /// Creates the zip archive using files infos.
+        /// Creates the zip archive for the specified files, encrypted with the given password.
         /// </summary>
         /// <param name="archiveName">Name of the archive.</param>
-        /// <param name="filePaths">The file paths.</param>
-        /// <param name="password">The password.</param>
-        /// <returns></returns>
+        /// <param name="filePaths">The list containing the paths of files to be archived.</param>
+        /// <param name="password">The password for encrypting the zip archive.</param>
+        /// <returns>
+        /// The path to the zip archive created.
+        /// </returns>
         public static string CreateZipArchiveWithPassword(string archiveName, List<string> filePaths, string password)
         {
             try
@@ -61,11 +63,13 @@ namespace Techjini.Utils
         }
 
         /// <summary>
-        /// Creates the zip archive using files infos.
+        /// Creates the zip archive for the specified file, encrypted with the given password.
         /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="password">The password.</param>
-        /// <returns></returns>
+        /// <param name="filePath">The paths of files to be archived.</param>
+        /// <param name="password">The password for encrypting the zip archive.</param>
+        /// <returns>
+        /// The path to the zip archive created.
+        /// </returns>
         public static string CreateZipArchiveWithPassword(string filePath, string password)
         {
             try
@@ -81,11 +85,13 @@ namespace Techjini.Utils
         }
 
         /// <summary>
-        /// Password protects the zip archive.
+        /// Password protects the given zip archive with the specified password.
         /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="password">The password.</param>
-        /// <returns></returns>
+        /// <param name="filePath">The path of the zip archive.</param>
+        /// <param name="password">The password for encrypting the zip archive.</param>
+        /// <returns>
+        ///   <c>true</c> if successfully encrypted the given archive, otherwise, <c>false</c>.
+        /// </returns>
         public static bool PasswordProtectZipArchive(string filePath, string password)
         {
             if (string.IsNullOrWhiteSpace(filePath))
